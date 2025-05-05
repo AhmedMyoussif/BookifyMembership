@@ -1,0 +1,6 @@
+@BookifyMembership_HostAddress = http://localhost:5186
+
+GET {{BookifyMembership_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
