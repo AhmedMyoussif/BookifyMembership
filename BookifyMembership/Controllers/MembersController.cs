@@ -20,6 +20,13 @@ namespace BookifyMembership.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest request)
         {
+            var validTiers = new[] { "Basic", "Premium" };
+            if (!string.IsNullOrWhiteSpace(request.MembershipTier) &&
+                !validTiers.Contains(request.MembershipTier.Trim(), StringComparer.OrdinalIgnoreCase))
+            {
+                return BadRequest(new { message = "MembershipTier must be either 'Basic' or 'Premium'." });
+            }
+
             var user = _userService.Register(request);
             if (user == null)
                 return BadRequest(new { message = "Username or Email already exists." });
@@ -49,7 +56,7 @@ namespace BookifyMembership.Controllers
         }
 
         // GET: api/members/{id}
-        [HttpGet("Members{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
             var user = _userService.GetById(id);
@@ -66,7 +73,7 @@ namespace BookifyMembership.Controllers
         }
 
         // PUT: api/members/{id}/upgrade
-        [HttpPut("{id}/upgrade to Premium")]
+        [HttpPut("{id}/upgrade")]
         public IActionResult Upgrade(int id)
         {
             var success = _userService.UpgradeMembership(id);
@@ -77,4 +84,3 @@ namespace BookifyMembership.Controllers
         }
     }
 }
-

@@ -12,15 +12,20 @@ namespace BookifyMembership.Services
 
         public User? Register(RegisterRequest request)
         {
-            if (_users.Any(u => u.Username == request.Username || u.Email == request.Email))
+            if (_users.Any(u =>
+                u.Username.Equals(request.Username, StringComparison.OrdinalIgnoreCase) ||
+                u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase)))
+            {
                 return null;
+            }
+
 
             var user = new User
             {
                 UserId = _idCounter++,
                 Username = request.Username,
                 Email = request.Email,
-                MembershipTier = request.MembershipTier ?? "Basic"
+                MembershipTier = string.IsNullOrWhiteSpace(request.MembershipTier) ? "Basic" : request.MembershipTier
             };
 
             user.PasswordHash = _hasher.HashPassword(user, request.Password);
